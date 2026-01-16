@@ -1,11 +1,95 @@
+"use client";
+
+import { useState } from "react";
 import Logo from "./Logo";
 import Menu from "./Menu";
+import { NavBarProps } from "../types/navbar";
+import Image from "next/image";
 
-export default function NavBar(){
+export default function NavBar({ onSearch }: NavBarProps) {
+  const [query, setQuery] = useState("");
+
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    onSearch(query);
+  }
+
   return (
-    <div className="flex items-center justify-between xl:px-20 px-10 bg-(--bg-main) h-12">
-      <Logo />
-      <Menu />
-    </div>
+    <header className="bg-(--bg-main)">
+      <div className="
+        flex
+        items-center
+        md:justify-between
+        justify-center
+        gap-8
+        md:gap-0
+        h-16
+        px-8
+        xl:px-16
+      ">
+        {/* Logo */}
+        <Logo />
+
+        {/* Search */}
+        <form
+          onSubmit={handleSubmit}
+          className="relative mx-auto md:mx-0 flex-1 sm:max-w-sm md:max-w-md xl:max-w-xl"
+        >
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Buscar..."
+            className="
+              w-full
+              h-10
+              rounded-md
+              bg-(--text-main)
+              px-4
+              pr-12
+              text-(--bg-main)
+              outline-none
+            "
+          />
+
+          {/* Divider */}
+          <span className="
+            absolute
+            right-10
+            top-1/2
+            -translate-y-1/2
+            h-5
+            w-px
+            bg-(--text-secondary)
+            opacity-40
+          " />
+
+          {/* Button */}
+          <button
+            type="submit"
+            className="
+              absolute
+              right-2
+              top-1/2
+              -translate-y-1/2
+              flex
+              h-8
+              w-8
+              items-center
+              justify-center
+            "
+          >
+            <Image
+              src="https://i.postimg.cc/t4PGp1ZF/54481.png"
+              width={16}
+              height={16}
+              alt="Buscar"
+            />
+          </button>
+        </form>
+
+        {/* Menu */}
+        <Menu />
+      </div>
+    </header>
   );
 }
