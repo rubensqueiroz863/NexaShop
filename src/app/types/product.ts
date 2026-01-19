@@ -3,4 +3,5 @@ export type ProductProps = {
   name: string;
   price: number;
   query: string;
+  photo: string;
 }
