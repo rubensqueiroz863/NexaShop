@@ -38,7 +38,7 @@ export default function HomePage() {
       )}
       <ul className="gap-2 grid xl:grid-cols-4 grid-cols-3">
         {results.map(product => (
-          <Product key={product.id} query={query} id={product.id} name={product.name} price={product.price}/>
+          <Product key={product.id} query={query} id={product.id} name={product.name} price={product.price} photo={product.photo}/>
         ))}
       </ul>
     </div>
