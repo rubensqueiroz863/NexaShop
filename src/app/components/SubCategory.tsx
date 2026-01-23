@@ -52,6 +52,7 @@ export default function SubCategory({ name, slug }: SubCategoryProps) {
       <div className="flex gap-4 overflow-x-auto">
         {products.map(product => (
           <Product
+            width="min-w-xs max-w-xs"
             key={product.id}
             query=""
             id={product.id}
