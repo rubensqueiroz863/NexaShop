@@ -5,11 +5,15 @@ import NavBar from "./components/NavBar";
 import { SubCategoryProps } from "./types/subCategory";
 import SubCategory from "./components/SubCategory";
 import { useRouter } from "next/navigation";
+import { useMenu } from "@/lib/menu";
+import MenuDrawer from "./components/MenuDrawer";
 
 export default function HomePage() {
   const [subCategories, setSubCategories] = useState<SubCategoryProps[]>([]);
 
   const router = useRouter();
+  const menu = useMenu();
+  console.log(menu.isOpen)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -54,7 +58,7 @@ export default function HomePage() {
           />
         ))}
       </ul>
+      {menu.isOpen && <MenuDrawer />}
     </div>
-
   );
 }
