@@ -1,5 +1,6 @@
 "use client";
 
+import Footer from "@/app/components/Footer";
 import NavBar from "@/app/components/NavBar";
 import { ProductProps } from "@/app/types/product";
 import { useRouter } from "next/navigation";
@@ -105,6 +106,8 @@ export default function ProductClient({ id }: Props) {
           </div>
         </div>
       </div>
+      <div className="w-full h-px bg-(--soft-border) mt-30 md:mt-35" />
+      <Footer />
     </div>
   );
 

@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import NavBar from "@/app/components/NavBar";
 import { useInView } from "react-intersection-observer";
 import { PageResponse } from "@/app/types/pageResponse";
+import Footer from "@/app/components/Footer";
 
 type Props = {
   query: string;
@@ -94,7 +95,7 @@ export default function SearchClient({ query }: Props) {
       <div className="w-full h-px bg-(--hover-border)" />
       { /* Detecta se está carregando */}
       {loading && !searched ? (
-        <p className="px-4 my-4 text-(--text-main) font-bold">
+        <p className="px-4 my-4 mb-[400px] text-(--text-main) font-bold">
           Buscando...
         </p>
       ) : searched ? (
@@ -145,6 +146,8 @@ export default function SearchClient({ query }: Props) {
           )}
         </div>
       )}
+      <div className="w-full h-px bg-(--soft-border) mt-30 md:mt-35" />
+      <Footer />
     </div>
   );
 }
