@@ -10,6 +10,7 @@ import MenuDrawer from "./components/MenuDrawer";
 import { AnimatePresence } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { PageResponse } from "./types/pageResponse";
+import Footer from "./components/Footer";
 
 export default function HomePage() {
   const [subCategories, setSubCategories] = useState<SubCategoryProps[]>([]);
@@ -98,7 +99,7 @@ export default function HomePage() {
 
       {/* 🔽 SENTINELA DO INFINITE SCROLL */}
       {hasMore && (
-        <div ref={ref} className="py-4 text-center text-sm text-gray-400">
+        <div ref={ref} className="py-4 mb-[500px] text-center text-sm text-gray-400">
           {loading ? "Carregando..." : "Carregando mais..."}
         </div>
       )}
@@ -106,6 +107,8 @@ export default function HomePage() {
       <AnimatePresence>
         {menu.isOpen && <MenuDrawer />}
       </AnimatePresence>
+      <div className="w-full h-px bg-(--soft-border) mt-30 md:mt-35" />
+      <Footer />
     </div>
   );
 }
