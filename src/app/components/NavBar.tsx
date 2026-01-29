@@ -45,13 +45,13 @@ export default function NavBar({ onSearch }: NavBarProps) {
               md:h-10
               h-8
               rounded-md
-              bg-(--text-main)
+              bg-white
               px-2
-              md:px-4
               pr-12
               text-[12px]
               md:text-[14px]
-              text-(--bg-main)
+              text-neutral-900
+              shadow-md
               outline-none
             "
           />
@@ -64,7 +64,7 @@ export default function NavBar({ onSearch }: NavBarProps) {
             -translate-y-1/2
             h-5
             w-px
-            bg-(--text-secondary)
+            bg-(--text-main)
             opacity-40
           " />
 
