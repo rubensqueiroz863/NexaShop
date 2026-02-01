@@ -5,6 +5,7 @@ export type ProductProps = {
   query: string;
   photo: string;
   width: string;
+  quantity: number;
 }
 
 export type ProductPageProps = {
