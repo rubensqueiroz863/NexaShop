@@ -1,8 +1,11 @@
 "use client";
 
 import Footer from "@/app/components/Footer";
+import MenuDrawer from "@/app/components/MenuDrawer";
 import NavBar from "@/app/components/NavBar";
 import { ProductProps } from "@/app/types/product";
+import { useMenu } from "@/lib/menu";
+import { AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -15,6 +18,7 @@ export default function ProductClient({ id }: Props) {
   const [product, setProduct] = useState<ProductProps | null>(null);
 
   const router = useRouter();
+  const menu = useMenu();
 
   useEffect(() => {
     async function fetchProduct() {
@@ -106,6 +110,10 @@ export default function ProductClient({ id }: Props) {
           </div>
         </div>
       </div>
+      { /* Menu drawer */}
+      <AnimatePresence>
+        {menu.isOpen && <MenuDrawer />}
+      </AnimatePresence>
       <div className="w-full h-px bg-(--soft-border) mt-30 md:mt-35" />
       <Footer />
     </div>
