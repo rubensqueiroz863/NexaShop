@@ -11,6 +11,8 @@ import { AnimatePresence } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { PageResponse } from "./types/pageResponse";
 import Footer from "./components/Footer";
+import CartDrawer from "./components/CartDrawer";
+import { useCart } from "@/lib/cart";
 
 export default function HomePage() {
   const [subCategories, setSubCategories] = useState<SubCategoryProps[]>([]);
@@ -20,6 +22,7 @@ export default function HomePage() {
 
   const router = useRouter();
   const menu = useMenu();
+  const cart = useCart();
 
   // Detecta se está visivel na tela
   const { ref, inView } = useInView({
@@ -106,6 +109,10 @@ export default function HomePage() {
       { /* Menu drawer */}
       <AnimatePresence>
         {menu.isOpen && <MenuDrawer />}
+      </AnimatePresence>
+      { /* Cart drawer */}
+      <AnimatePresence>
+        {cart.isOpen && <CartDrawer />}
       </AnimatePresence>
       <div className="w-full h-px bg-(--soft-border) mt-30 md:mt-35" />
       <Footer />
