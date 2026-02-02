@@ -1,9 +1,11 @@
 "use client";
 
+import CartDrawer from "@/app/components/CartDrawer";
 import Footer from "@/app/components/Footer";
 import MenuDrawer from "@/app/components/MenuDrawer";
 import NavBar from "@/app/components/NavBar";
 import { ProductProps } from "@/app/types/product";
+import { useCart } from "@/lib/cart";
 import { useMenu } from "@/lib/menu";
 import { AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
@@ -19,6 +21,7 @@ export default function ProductClient({ id }: Props) {
 
   const router = useRouter();
   const menu = useMenu();
+  const cart = useCart();
 
   useEffect(() => {
     async function fetchProduct() {
@@ -113,6 +116,10 @@ export default function ProductClient({ id }: Props) {
       { /* Menu drawer */}
       <AnimatePresence>
         {menu.isOpen && <MenuDrawer />}
+      </AnimatePresence>
+      { /* Cart drawer */}
+      <AnimatePresence>
+        {cart.isOpen && <CartDrawer />}
       </AnimatePresence>
       <div className="w-full h-px bg-(--soft-border) mt-30 md:mt-35" />
       <Footer />

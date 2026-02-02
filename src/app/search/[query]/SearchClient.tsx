@@ -11,6 +11,8 @@ import Footer from "@/app/components/Footer";
 import { AnimatePresence } from "framer-motion";
 import MenuDrawer from "@/app/components/MenuDrawer";
 import { useMenu } from "@/lib/menu";
+import CartDrawer from "@/app/components/CartDrawer";
+import { useCart } from "@/lib/cart";
 
 type Props = {
   query: string;
@@ -30,6 +32,7 @@ export default function SearchClient({ query }: Props) {
 
   const router = useRouter();
   const menu = useMenu();
+  const cart = useCart();
 
   // 🔹 busca inicial (ou quando query muda)
   useEffect(() => {
@@ -153,6 +156,10 @@ export default function SearchClient({ query }: Props) {
       { /* Menu drawer */}
       <AnimatePresence>
         {menu.isOpen && <MenuDrawer />}
+      </AnimatePresence>
+      { /* Cart drawer */}
+      <AnimatePresence>
+        {cart.isOpen && <CartDrawer />}
       </AnimatePresence>
       <div className="w-full h-px bg-(--soft-border) mt-30 md:mt-35" />
       <Footer />
