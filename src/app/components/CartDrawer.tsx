@@ -2,7 +2,6 @@ import { useCart } from "@/lib/cart";
 import { motion } from "framer-motion";
 import { ProductProps } from "../types/product";
 import ProductCart from "./ProductCart";
-import CartButton from "./CartButton";
 import CloseCartButton from "./CloseCartButton";
 
 export default function CartDrawer() {
