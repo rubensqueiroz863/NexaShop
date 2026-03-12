@@ -1,13 +1,19 @@
 @import "tailwindcss";
 
 [data-theme="dark"] {
-  --bg-main: #0F0F0F;
-  --bg-secondary: #151515;
-  --bg-card: #1C1C1C;
+  --bg-main: #ffffff;
+  --bg-secondary: #1f1f21;
+  --bg-card: #292a37;
+  --bg-soft: #3c3d48;
 
-  --text-main: #F5F5F5;
+  --text-main: #ffffff;
   --text-secondary: #B0B0B0;
   --text-muted: #7A7A7A;
+
+  --text-light: #ffffff;
+  --text-dark: #292929;
+
+  --primary-color: #2dc5bb;
 
   --soft-border: #2A2A2A;
   --hover-border: #3A3A3A;
