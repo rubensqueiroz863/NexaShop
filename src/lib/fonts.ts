@@ -9,3 +9,13 @@ export const ArchivoBlack = localFont({
     }, 
   ],
 });
+
+export const OpenSans = localFont({
+  src: [
+    {
+      path: "../fonts/OpenSans-Regular.ttf",
+      weight: "400",
+      style: "normal",
+    }, 
+  ],
+});
