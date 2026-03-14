@@ -19,16 +19,6 @@ export default function PhoneCategoryCard() {
           Shop by Category
         </button>
       </div>
-
-      {/* Descrição com sombra apenas embaixo */}
-      <div className="hidden xl:block text-(--text-secondary) max-w-md text-lg leading-relaxed mt-6 xl:mt-0 px-4 py-2 relative rounded-lg">
-        <p className="relative z-10">
-          Explore a wide selection of the latest smartphones and accessories. Discover premium quality devices designed to keep you connected, entertained, and ahead of the curve.
-        </p>
-        {/* Sombra apenas embaixo */}
-        <div className="absolute bottom-0 left-0 w-full h-4 bg-black/10 rounded-b-lg blur-xl z-0"></div>
-      </div>
-
       {/* Imagem */}
       <Image
         src="/images/phones.png"
