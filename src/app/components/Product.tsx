@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { ProductProps } from "../types/product";
+import { OpenSans } from "@/lib/fonts";
 
 type ClickRequest = {
   productId: string;
@@ -108,7 +109,7 @@ export default function Product({
   return (
     <button
       onClick={handleClick}
-      className={`cursor-pointer flex flex-col ${width} mb-4 bg-(--bg-card) rounded-2xl shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden`}
+      className={`cursor-pointer flex flex-col ${width} mb-4 bg-white duration-300 overflow-hidden`}
     >
       <div className="flex items-center justify-center bg-white p-4">
         <Image
@@ -116,12 +117,12 @@ export default function Product({
           width={800}
           height={800}
           alt="Product photo"
-          className="h-56 w-auto object-contain"
+          className="h-36 w-auto object-contain"
         />
       </div>
 
       <div className="flex flex-col gap-1 p-4">
-        <p className="text-(--text-main) font-medium line-clamp-2">
+        <p className={`text-(--text-dark) font-bold line-clamp-2 ${OpenSans.className}`}>
           {name}
         </p>
 
