@@ -29,10 +29,6 @@ interface MostClickedProductDTO {
   clicks: number;
 }
 
-function ramdomKey(max: number): number {
-  return Math.floor(Math.random() * max);
-}
-
 export interface UserRecommendation {
   productId: string;
   productName: string;
@@ -240,7 +236,6 @@ export default function HomePage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          {/* Header */}
           <motion.div
             className={`flex items-center gap-18 text-(--text-dark) ${OpenSans.className}`}
             initial={{ opacity: 0, y: 50 }}
@@ -258,7 +253,6 @@ export default function HomePage() {
             </button>
           </motion.div>
 
-          {/* Produtos */}
           <div className="flex gap-6 overflow-x-auto overflow-y-hidden mt-4">
             {forYou.map(({ product, clicks }, index) => (
               <div key={product.id} className="relative flex items-center">
@@ -273,7 +267,6 @@ export default function HomePage() {
                   role="user"
                 />
 
-                {/* Separador */}
                 {index !== forYou.length - 1 && (
                   <span className="absolute bg-(--text-secondary) -right-3 top-1/2 h-full w-px my-2 -translate-y-1/2" />
                 )}
@@ -290,7 +283,6 @@ export default function HomePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            {/* Header */}
             <motion.div
               className={`flex items-center gap-18 text-(--text-dark) ${OpenSans.className}`}
               initial={{ opacity: 0, y: 50 }}
@@ -308,7 +300,6 @@ export default function HomePage() {
               </button>
             </motion.div>
 
-            {/* Produtos */}
             <div className="flex gap-6 overflow-x-auto overflow-y-hidden mt-4">
               {userRecommendations.recommendations.map((rec, index) => (
                 <div key={rec.productId} className="relative flex flex-col items-start gap-1">
@@ -327,7 +318,6 @@ export default function HomePage() {
                     role="user"
                   />
 
-                  {/* Separador */}
                   {index !== userRecommendations.recommendations.length - 1 && (
                     <span className="absolute bg-(--text-secondary) -right-3 top-1/2 h-20 w-px opacity-40 -translate-y-1/2" />
                   )}
@@ -340,7 +330,7 @@ export default function HomePage() {
         <AnimatePresence>
           {subCategories.map(subCategory => (
             <SubCategory
-              key={`sub-${subCategory.id + ramdomKey(10000000000000)}`} // ✅ Prefixo evita conflito de keys
+              key={`sub-${subCategory.id}`}
               id={subCategory.id}
               name={subCategory.name}
               slug={subCategory.slug}
@@ -348,7 +338,6 @@ export default function HomePage() {
             />
           ))}
         </AnimatePresence>
-      {/* Sentinela Infinite Scroll */}
       {hasMore && (
         <div
           ref={ref}
