@@ -83,13 +83,13 @@ export default function CategoriesCard() {
           key={name}
           className="group flex flex-col"
         >
-          <div className="flex items-center gap-3 px-2 py-2 cursor-pointer transition-all hover:opacity-50">
+          <div className="flex items-center gap-3 px-2 py-2 cursor-pointer transition-all">
             <div className="text-(--text-dark) group-hover:text-(--primary-color) transition-colors">
               {icon}
             </div>
-            <p className="flex-1">{name}</p>
+            <p className="flex-1 group-hover:opacity-70">{name}</p>
             <svg
-              className="w-4 h-4 text-(--text-dark) group-hover:translate-x-1 transition-all"
+              className="w-4 h-4 text-(--text-dark) group-hover:translate-x-1 group-hover:text-(--primary-color) transition-all"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"

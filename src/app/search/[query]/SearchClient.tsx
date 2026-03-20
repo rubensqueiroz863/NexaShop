@@ -33,26 +33,34 @@ export default function SearchClient({ query }: SearchProps) {
 
   useEffect(() => {
     async function findProducts() {
-      if (!query) router.push("/");
+      if (!query) {
+        router.push("/");
+        return;
+      }
 
       setLoading(true);
       setSearched(false);
 
-      const res = await fetch(
-        `https://sticky-charil-react-blog-3b39d9e9.koyeb.app/produtos/buscar?name=${query}&page=0&size=4`
-      );
+      try {
+        const res = await fetch(
+          `https://sticky-charil-react-blog-3b39d9e9.koyeb.app/produtos/buscar?name=${query}&page=0&size=4`
+        );
 
-      const data: PageResponse<ProductProps> = await res.json();
+        const data: PageResponse<ProductProps> = await res.json();
 
-      setResults(data.data);
-      setHasMore(data.hasMore);
-      setPage(1);
-      setSearched(true);
-      setLoading(false);
+        setResults(data.data);
+        setHasMore(data.hasMore);
+        setPage(1);
+        setSearched(true);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
     }
 
     findProducts();
-  }, [query]);
+  }, [query, router]);
 
   const loadMore = useCallback(async () => {
     if (loading || !hasMore) return;
@@ -62,11 +70,12 @@ export default function SearchClient({ query }: SearchProps) {
       const res = await fetch(
         `https://sticky-charil-react-blog-3b39d9e9.koyeb.app/produtos/buscar?name=${query}&page=${page}&size=4`
       );
+
       const data: PageResponse<ProductProps> = await res.json();
-      
-      setResults(prev => [...prev, ...data.data]);
+
+      setResults((prev) => [...prev, ...data.data]);
       setHasMore(data.hasMore);
-      setPage(prev => prev + 1);
+      setPage((prev) => prev + 1);
     } catch (err) {
       console.error(err);
     } finally {
@@ -75,32 +84,29 @@ export default function SearchClient({ query }: SearchProps) {
   }, [query, page, hasMore, loading]);
 
   useEffect(() => {
-    if (inView) {
-      loadMore();
-    }
+    if (inView) loadMore();
   }, [inView, loadMore]);
 
   function search(query: string) {
     router.push(`/search/${query}`);
   }
 
-  if (!query) router.push("/");
+  if (!query) return null;
 
   return (
-    <div>
+    <div className="bg-[var(--bg-main)] min-h-screen">
       <NavBar onSearch={search} />
-      <div className="w-full h-px bg-(--hover-border)" />
       {loading && !searched ? (
-        <p className="px-4 my-4 mb-[400px] text-(--text-main) font-bold">
+        <p className="px-4 my-4 mb-[400px] text-[var(--text-dark)] font-semibold">
           Searching...
         </p>
       ) : searched ? (
         <div className="flex my-4 px-4 flex-col">
-          <p className="text-xl text-(--text-main) font-bold">
+          <p className="text-xl text-[var(--text-dark)] font-semibold">
             {query}
           </p>
-          <p className="text-sm text-(--text-secondary)">
-            {results.length} results.
+          <p className="text-sm text-[var(--text-secondary)]">
+            {results.length} results
           </p>
         </div>
       ) : null}
@@ -110,30 +116,48 @@ export default function SearchClient({ query }: SearchProps) {
           grid-cols-2
           md:grid-cols-3
           xl:grid-cols-4
-          gap-4
+          gap-6
           px-4
         "
       >
-        {results.map(product => (
-          <Product
+        {results.map((product, index) => (
+          <div
             key={product.id}
-            width=""
-            query={query}
-            id={product.id}
-            role="user"
-            name={product.name}
-            price={product.price}
-            photo={product.photo}
-          />
+            className="relative flex flex-col items-center"
+          >
+            <Product
+              width=""
+              query={query}
+              id={product.id}
+              role="user"
+              name={product.name}
+              price={product.price}
+              photo={product.photo}
+            />
+            {index !== results.length - 1 && (
+              <span
+                className="
+                  absolute
+                  right-[-12px]
+                  top-1/2
+                  h-2/3
+                  w-px
+                  bg-[var(--text-secondary)]
+                  opacity-30
+                  -translate-y-1/2
+                "
+              />
+            )}
+          </div>
         ))}
       </ul>
       {hasMore && (
         <div
           ref={ref}
-          className="h-10 flex items-center justify-center my-6"
+          className="h-12 flex items-center justify-center my-6"
         >
           {loading && (
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-[var(--text-muted)]">
               Loading more products...
             </p>
           )}
@@ -142,10 +166,10 @@ export default function SearchClient({ query }: SearchProps) {
       <AnimatePresence>
         {menu.isOpen && <MenuDrawer />}
       </AnimatePresence>
+
       <AnimatePresence>
         {cart.isOpen && <CartDrawer />}
       </AnimatePresence>
-      <div className="w-full h-px bg-(--soft-border) mt-30 md:mt-35" />
       <Footer />
     </div>
   );

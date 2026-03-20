@@ -336,7 +336,7 @@ export default function HomePage() {
       )}
       <AnimatePresence>{menu.isOpen && <MenuDrawer />}</AnimatePresence>
       <AnimatePresence>{cart.isOpen && <CartDrawer />}</AnimatePresence>
-      <div className="w-full h-px bg-(--soft-border) mt-30 md:mt-35" />
+      
       <Footer />
     </div>
   );

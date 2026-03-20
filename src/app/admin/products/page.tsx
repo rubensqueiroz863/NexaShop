@@ -66,7 +66,7 @@ export default function ProductsAdmin() {
       {hasMore && (
         <div
           ref={ref}
-          className="py-4 mb-125 text-center text-sm text-gray-400"
+          className="py-4 mb-125 text-center text-sm text-(--text-dark)"
         >
           {loading ? "Loading..." : "Loading more..."}
         </div>

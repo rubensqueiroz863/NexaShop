@@ -27,3 +27,29 @@
 html {
   scroll-behavior: smooth;
 }
+
+body {
+  background: var(--bg-main);
+  color: var(--text-main);
+}
+
+.cs {
+  cursor: pointer;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--bg-soft);
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--hover-border);
+}

@@ -68,7 +68,7 @@ export default function AdminMenuDrawer() {
       />
 
       <motion.div
-        className="fixed overflow-auto pb-10 top-0 left-0 md:w-1/3 w-1/2 h-screen bg-(--bg-main) z-50 shadow-lg"
+        className="fixed overflow-auto pb-10 top-0 left-0 md:w-1/3 w-1/2 h-screen bg-(--bg-card) z-50 shadow-lg"
         initial={{ x: "-100%" }}
         animate={{ x: 0 }}
         exit={{ x: "-100%" }}

@@ -6,7 +6,6 @@ import { ProductClientProps } from "@/app/types/product";
 import { UserProps } from "@/app/types/user";
 import { useAdminMenu } from "@/lib/menu";
 import { AnimatePresence, motion } from "framer-motion";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function UserAdminClient({ id }: Readonly<ProductClientProps>) {
@@ -75,14 +74,19 @@ export default function UserAdminClient({ id }: Readonly<ProductClientProps>) {
         }),
       });
 
-      const data = await res.json();
+      let data;
+      try {
+        data = await res.json();
+      } catch {
+        data = null;
+      }
 
       if (!res.ok) {
-        setError(data.message || "Error in paching user.");
+        setError(data?.message || "Error in patching user.");
         return;
       }
 
-      setSuccessMessage("Success in paching user!");
+      setSuccessMessage("Success in patching user!");
       setOriginalUser(user);
     } catch (err) {
       console.error(err);
@@ -94,21 +98,21 @@ export default function UserAdminClient({ id }: Readonly<ProductClientProps>) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-(--bg-main) flex items-center justify-center">
-        <p className="text-neutral-500">Loading user...</p>
+      <div className="min-h-screen bg-[var(--bg-main)] flex items-center justify-center">
+        <p className="text-[var(--text-muted)]">Loading user...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg(--bg-main) relative">
+    <div className="min-h-screen bg-[var(--bg-main)] relative">
       <AnimatePresence>
         {successMessage && (
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="fixed top-5 right-5 bg-green-500 text-white px-5 py-3 rounded shadow-lg z-50"
+            className="fixed top-5 right-5 bg-[var(--success)] text-white px-5 py-3 rounded shadow-lg z-50"
           >
             {successMessage}
           </motion.div>
@@ -117,13 +121,13 @@ export default function UserAdminClient({ id }: Readonly<ProductClientProps>) {
       <div className="max-w-xl mx-auto px-4 py-16">
         <form
           onSubmit={handleEdit}
-          className="bg-(--bg-card) p-8 rounded-2xl shadow-sm flex flex-col gap-6"
+          className="bg-[var(--bg-card)] p-8 rounded-2xl shadow-sm flex flex-col gap-6 border border-[var(--soft-border)]"
         >
-          <h2 className="text-2xl font-semibold text-(--text-main)">
+          <h2 className="text-2xl font-semibold text-[var(--text-main)]">
             Edit User
           </h2>
           <div className="flex flex-col gap-1">
-            <label className="text-sm text-neutral-500">Nome</label>
+            <label className="text-sm text-[var(--text-secondary)]">Name</label>
             <input
               type="text"
               value={user?.name || ""}
@@ -132,11 +136,11 @@ export default function UserAdminClient({ id }: Readonly<ProductClientProps>) {
                   prev ? { ...prev, name: e.target.value } : prev
                 )
               }
-              className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-neutral-800"
+              className="bg-[var(--bg-soft)] text-[var(--text-main)] border border-[var(--soft-border)] rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]"
             />
           </div>
           <div className="flex flex-col gap-1">
-            <label className="text-sm text-neutral-500">Email</label>
+            <label className="text-sm text-[var(--text-secondary)]">Email</label>
             <input
               type="email"
               value={user?.email || ""}
@@ -145,31 +149,34 @@ export default function UserAdminClient({ id }: Readonly<ProductClientProps>) {
                   prev ? { ...prev, email: e.target.value } : prev
                 )
               }
-              className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-neutral-800"
+              className="bg-[var(--bg-soft)] text-[var(--text-main)] border border-[var(--soft-border)] rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]"
             />
           </div>
           <div className="flex flex-col gap-1">
-            <label className="text-sm">Role</label>
+            <label className="text-sm text-[var(--text-secondary)]">Role</label>
             <select
-              name="role"
               value={user?.role || "ROLE_USER"}
               onChange={(e) =>
                 setUser((prev) =>
-                  prev ? { ...prev, role: e.target.value as "ROLE_USER" | "ROLE_ADMIN" } : prev
+                  prev
+                    ? {
+                        ...prev,
+                        role: e.target.value as "ROLE_USER" | "ROLE_ADMIN",
+                      }
+                    : prev
                 )
               }
-              className="border cursor-pointer rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-neutral-800"
+              className="bg-[var(--bg-soft)] text-[var(--text-main)] border border-[var(--soft-border)] rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] cursor-pointer"
             >
               <option value="ROLE_USER">User</option>
               <option value="ROLE_ADMIN">Admin</option>
             </select>
           </div>
-          {/* Botões */}
           <div className="flex gap-3 mt-4">
             <button
               type="submit"
               disabled={editLoading}
-              className="bg-neutral-900 cursor-pointer text-white px-6 py-2 rounded-md hover:bg-neutral-800 transition disabled:opacity-50"
+              className="bg-[var(--primary-color)] text-black px-6 py-2 rounded-md hover:opacity-90 transition disabled:opacity-50 cursor-pointer"
             >
               {editLoading ? "Saving..." : "Save Changes"}
             </button>
@@ -177,16 +184,18 @@ export default function UserAdminClient({ id }: Readonly<ProductClientProps>) {
             <button
               type="button"
               onClick={handleCancel}
-              className="border px-6 py-2 cursor-pointer rounded-md hover:bg-neutral-200 transition"
+              className="border border-[var(--hover-border)] text-[var(--text-main)] px-6 py-2 rounded-md hover:bg-[var(--bg-soft)] transition cursor-pointer"
             >
               Cancel
             </button>
           </div>
-          {error && <p className="text-red-500">{error}</p>}
+          {error && <p className="text-[var(--error)]">{error}</p>}
         </form>
       </div>
-      <AnimatePresence>{menu.isOpen && <AdminMenuDrawer />}</AnimatePresence>
-      <div className="w-full h-px bg-[--soft-border] mt-30 md:mt-35" />
+      <AnimatePresence>
+        {menu.isOpen && <AdminMenuDrawer />}
+      </AnimatePresence>
+      <div className="w-full h-px bg-[var(--hover-border)] mt-30 md:mt-35" />
       <Footer />
     </div>
   );

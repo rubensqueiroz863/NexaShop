@@ -51,10 +51,15 @@ export default function RegisterUsersAdmin() {
         }),
       });
 
-      const data = await res.json();
+      let data;
+      try {
+        data = await res.json();
+      } catch {
+        data = null;
+      }
 
       if (!res.ok) {
-        setError(data.message || "Error in Server.");
+        setError(data?.message || "Error in Server.");
         return;
       }
 
@@ -69,69 +74,68 @@ export default function RegisterUsersAdmin() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-dvh bg-neutral-100">
+    <div className="flex items-center justify-center min-h-dvh bg-[var(--bg-main)]">
       <AnimatePresence>
         {successMessage && (
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="fixed top-5 right-5 bg-green-500 text-white px-5 py-3 rounded shadow-lg z-50"
+            className="fixed top-5 right-5 bg-[var(--success)] text-white px-5 py-3 rounded shadow-lg z-50"
           >
             {successMessage}
           </motion.div>
         )}
       </AnimatePresence>
-      <div className="bg-white w-full max-w-md rounded-xl shadow-lg p-8">
-        <h1 className="text-2xl font-semibold text-neutral-800 mb-6 text-center">
+      <div className="bg-[var(--bg-card)] w-full max-w-md rounded-xl shadow-lg p-8 border border-[var(--soft-border)]">
+        <h1 className="text-2xl font-semibold text-[var(--text-main)] mb-6 text-center">
           Register User
         </h1>
-
         <form
           onSubmit={handleUser}
-          className="flex flex-col gap-4 text-neutral-700"
+          className="flex flex-col gap-4"
         >
           <div className="flex flex-col gap-1">
-            <label className="text-sm">Name</label>
+            <label className="text-sm text-[var(--text-secondary)]">Name</label>
             <input
               name="nome"
               type="text"
-              className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-neutral-800"
+              className="bg-[var(--bg-soft)] text-[var(--text-main)] border border-[var(--soft-border)] rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]"
             />
           </div>
           <div className="flex flex-col gap-1">
-            <label className="text-sm">Email</label>
+            <label className="text-sm text-[var(--text-secondary)]">Email</label>
             <input
               name="email"
               type="email"
-              className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-neutral-800"
+              className="bg-[var(--bg-soft)] text-[var(--text-main)] border border-[var(--soft-border)] rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]"
             />
           </div>
           <div className="flex flex-col gap-1">
-            <label className="text-sm">Password</label>
+            <label className="text-sm text-[var(--text-secondary)]">Password</label>
             <input
               name="password"
               type="password"
-              className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-neutral-800"
+              className="bg-[var(--bg-soft)] text-[var(--text-main)] border border-[var(--soft-border)] rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]"
             />
           </div>
           <div className="flex flex-col gap-1">
-            <label className="text-sm">Role</label>
+            <label className="text-sm text-[var(--text-secondary)]">Role</label>
             <select
               name="userRole"
-              className="border cursor-pointer rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-neutral-800"
+              className="bg-[var(--bg-soft)] text-[var(--text-main)] border border-[var(--soft-border)] rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] cursor-pointer"
             >
               <option value="ROLE_USER">User</option>
               <option value="ROLE_ADMIN">Admin</option>
             </select>
           </div>
           {error && (
-            <p className="text-sm text-red-500 text-center">{error}</p>
+            <p className="text-sm text-[var(--error)] text-center">{error}</p>
           )}
           <button
             type="submit"
             disabled={loading}
-            className="mt-2 cursor-pointer bg-neutral-900 text-white py-2 rounded-md hover:bg-neutral-800 transition disabled:opacity-60"
+            className="mt-2 bg-[var(--primary-color)] text-black py-2 rounded-md hover:opacity-90 transition disabled:opacity-60 cursor-pointer"
           >
             {loading ? "Registering..." : "Register User"}
           </button>

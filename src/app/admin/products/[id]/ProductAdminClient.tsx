@@ -36,7 +36,6 @@ export default function ProductAdminClient({ id }: Readonly<ProductClientProps>)
         setPrice(formatUSD(data.price.toString()));
         setProduct(data);
         setOriginalProduct(data);
-
       } catch (err) {
         console.error(err);
         setError("Erro ao carregar o produto.");
@@ -85,7 +84,7 @@ export default function ProductAdminClient({ id }: Readonly<ProductClientProps>)
         return;
       }
 
-      setSuccessMessage("Produto atualizado com sucesso!");
+      setSuccessMessage("Success!");
       setProduct({ ...product, name: nameInput, price: priceInput });
       setOriginalProduct({ ...product, name: nameInput, price: priceInput });
     } catch (err) {
@@ -101,12 +100,12 @@ export default function ProductAdminClient({ id }: Readonly<ProductClientProps>)
       <div className="min-h-screen bg-(--bg-main)">
         <div className="max-w-6xl mx-auto px-4 mt-10 animate-pulse">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-            <div className="w-full h-80 bg-gray-300 rounded-xl" />
+            <div className="w-full h-80 bg-(--bg-soft) rounded-xl" />
             <div className="space-y-4">
-              <div className="h-8 w-3/4 bg-gray-300 rounded" />
-              <div className="h-4 w-full bg-gray-300 rounded" />
-              <div className="h-4 w-5/6 bg-gray-300 rounded" />
-              <div className="h-10 w-32 bg-gray-300 rounded mt-6" />
+              <div className="h-8 w-3/4 bg-(--bg-soft) rounded" />
+              <div className="h-4 w-full bg-(--bg-soft) rounded" />
+              <div className="h-4 w-5/6 bg-(--bg-soft) rounded" />
+              <div className="h-10 w-32 bg-(--bg-soft) rounded mt-6" />
             </div>
           </div>
         </div>
@@ -116,7 +115,6 @@ export default function ProductAdminClient({ id }: Readonly<ProductClientProps>)
 
   return (
     <div className="min-h-screen bg-(--bg-main) relative">
-      {/* Notificação de sucesso */}
       <AnimatePresence>
         {successMessage && (
           <motion.div
@@ -124,7 +122,7 @@ export default function ProductAdminClient({ id }: Readonly<ProductClientProps>)
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="fixed top-5 right-5 bg-green-500 text-white px-5 py-3 rounded shadow-lg z-50"
+            className="fixed top-5 right-5 bg-(--success) text-(--text-light) px-5 py-3 rounded shadow-lg z-50"
           >
             {successMessage}
           </motion.div>
@@ -132,75 +130,74 @@ export default function ProductAdminClient({ id }: Readonly<ProductClientProps>)
       </AnimatePresence>
 
       <div className="max-w-6xl mx-auto px-4 py-12">
-        <form onSubmit={handleEdit} className="grid grid-cols-1 md:grid-cols-2 gap-10 bg-(--bg-card) p-8 rounded-2xl shadow-sm">
-          {/* Imagem */}
-          <div className="flex flex-col items-center justify-center gap-4">
-            <div className="w-full h-96 bg-(--bg-main) rounded-xl flex items-center justify-center overflow-hidden">
+        <form className="grid grid-cols-1 md:grid-cols-2 gap-10 bg-(--bg-card) p-8 rounded-2xl shadow-sm" onSubmit={handleEdit}>
+          
+          {/* Image */}
+          <div className="flex flex-col items-center gap-4">
+            <div className="w-full h-96 bg-(--bg-soft) rounded-xl flex items-center justify-center overflow-hidden">
               <img
                 src={product?.photo || "https://i.postimg.cc/pXsJJ92z/526867-200.png"}
                 alt={product?.name}
                 className="max-h-full object-contain"
               />
             </div>
-            <p className="text-sm text-neutral-500">Preview da imagem do produto</p>
+            <p className="text-sm text-(--text-muted)">Image Preview</p>
           </div>
 
-          {/* Informações */}
+          {/* Form */}
           <div className="flex flex-col gap-6">
-            <h2 className="text-2xl font-semibold text-(--text-main)">Editar Produto</h2>
+            <h2 className="text-2xl font-semibold text-(--text-main)">Edit Product</h2>
 
-            {/* Nome */}
+            {/* Name */}
             <div className="flex flex-col gap-1">
-              <label className="text-sm text-neutral-500">Nome do produto</label>
+              <label className="text-sm text-(--text-secondary)">Name</label>
               <input
-                className="border rounded-md px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-neutral-800"
                 type="text"
                 name="nome"
                 value={product?.name || ""}
                 onChange={(e) =>
                   setProduct(prev => prev ? { ...prev, name: e.target.value } : prev)
                 }
+                className="bg-(--bg-soft) text-(--text-main) border border-(--soft-border) rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-(--primary-color)"
               />
             </div>
 
-            {/* Preço */}
+            {/* Price */}
             <div className="flex flex-col gap-1">
-              <label className="text-sm text-neutral-500">Preço</label>
+              <label className="text-sm text-(--text-secondary)">Price</label>
               <input
                 name="price"
                 type="text"
                 value={price}
                 onChange={handleChange}
-                placeholder="R$ 0,00"
-                className="border rounded-md px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-neutral-800"
+                placeholder="$0.00"
+                className="bg-(--bg-soft) text-(--text-main) border border-(--soft-border) rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-(--primary-color)"
               />
             </div>
-
-            {/* Botões */}
             <div className="flex gap-3 mt-4">
               <button
                 type="submit"
                 disabled={editLoading}
-                className="bg-neutral-900 cursor-pointer text-white px-6 py-2 rounded-md hover:bg-neutral-800 transition disabled:opacity-50"
+                className="bg-(--primary-color) cs text-(--text-light) px-6 py-2 rounded-md hover:opacity-90 transition disabled:opacity-50"
               >
-                {editLoading ? "Salvando..." : "Salvar alterações"}
+                {editLoading ? "Saving..." : "Save Changes"}
               </button>
+
               <button
                 type="button"
                 onClick={handleCancel}
-                className="border px-6 py-2 rounded-md cursor-pointer hover:bg-neutral-400 transition"
+                className="border cs border-(--hover-border) text-(--text-main) px-6 py-2 rounded-md hover:bg-(--bg-soft) transition"
               >
-                Cancelar
+                Cancel
               </button>
             </div>
-
-            {error && <p className="text-red-500 mt-2">{error}</p>}
+            {error && <p className="text-(--error) mt-2">{error}</p>}
           </div>
         </form>
       </div>
-
-      <AnimatePresence>{menu.isOpen && <AdminMenuDrawer />}</AnimatePresence>
-
+      <AnimatePresence>
+        {menu.isOpen && <AdminMenuDrawer />}
+      </AnimatePresence>
       <div className="w-full h-px bg-(--soft-border) mt-30 md:mt-35" />
       <Footer />
     </div>
