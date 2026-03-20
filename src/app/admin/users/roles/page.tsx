@@ -20,7 +20,14 @@ export default function UsersAdmin() {
     async function fetchUsers() {
       try {
         const res = await fetch("https://sticky-charil-react-blog-3b39d9e9.koyeb.app/user/all");
-        const data = await res.json();
+
+        let data;
+        try {
+          data = await res.json();
+        } catch {
+          data = [];
+        }
+
         setUsers(data);
       } catch (err) {
         console.error("Error in fetching users:", err);
@@ -58,7 +65,7 @@ export default function UsersAdmin() {
       );
 
       setChangedRoles({});
-      alert("Success in changin roles!");
+      alert("Success in changing roles!");
     } catch (err) {
       console.error(err);
       alert("Error in changing roles.");
@@ -67,7 +74,13 @@ export default function UsersAdmin() {
     }
   };
 
-  if (loading) return <p className="p-4">Loading Users...</p>;
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[var(--bg-main)] flex items-center justify-center">
+        <p className="text-[var(--text-muted)]">Loading Users...</p>
+      </div>
+    );
+  }
 
   const admins = users.filter(user => user.role === "ROLE_ADMIN");
   const normalUsers = users.filter(user => user.role === "ROLE_USER");
@@ -76,21 +89,21 @@ export default function UsersAdmin() {
     list.map(user => (
       <tr
         key={user.id}
-        className={`border-t cursor-pointer hover:bg-(--bg-main) transition-all duration-200 ${
-          changedRoles[user.id] ? "bg-(--bg-card) opacity-70" : ""
+        className={`border-t border-[var(--soft-border)] cursor-pointer transition-all duration-200 hover:bg-[var(--bg-soft)] ${
+          changedRoles[user.id] ? "opacity-70 bg-[var(--bg-soft)]" : ""
         }`}
         onClick={() => router.push(`/admin/users/${user.id}`)}
       >
-        <td className="p-3">{user.id}</td>
-        <td className="p-3 font-medium">{user.name}</td>
-        <td className="p-3">{user.email}</td>
+        <td className="p-3 text-[var(--text-muted)]">{user.id}</td>
+        <td className="p-3 font-medium text-[var(--text-main)]">{user.name}</td>
+        <td className="p-3 text-[var(--text-secondary)]">{user.email}</td>
 
         <td className="p-3">
           <select
             onClick={e => e.stopPropagation()}
-            value={changedRoles[user.id] ?? user.role} // mostra alteração se houver
+            value={changedRoles[user.id] ?? user.role}
             onChange={e => handleRoleChange(user.id, e.target.value as UserProps["role"])}
-            className={`border cursor-pointer rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-neutral-800 ${
+            className={`bg-[var(--bg-soft)] text-[var(--text-main)] border border-[var(--soft-border)] rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] cursor-pointer ${
               changedRoles[user.id] ? "opacity-70" : ""
             }`}
           >
@@ -102,35 +115,34 @@ export default function UsersAdmin() {
     ));
 
   return (
-    <div className="w-full max-w-5xl mx-auto overflow-x-auto p-16 flex flex-col gap-10">
-      {/* ADMINS */}
+    <div className="min-h-screen bg-[var(--bg-main)] px-6 py-12 flex flex-col gap-10 max-w-5xl mx-auto">
       <div>
-        <h2 className="text-xl font-semibold mb-4">Admins</h2>
-        <table className="w-full bg-(--bg-card) rounded-xl shadow-md overflow-hidden">
-          <thead className="bg-(--bg-secondary)">
+        <h2 className="text-xl font-semibold mb-4 text-[var(--text-main)]">
+          Admins
+        </h2>
+        <table className="w-full bg-[var(--bg-card)] rounded-xl shadow-md overflow-hidden border border-[var(--soft-border)]">
+          <thead className="bg-[var(--bg-secondary)]">
             <tr>
-              <th className="text-left p-3">ID</th>
-              <th className="text-left p-3">Name</th>
-              <th className="text-left p-3">Email</th>
-              <th className="text-left p-3">Role</th>
-              <th></th>
+              <th className="text-left p-3 text-[var(--text-secondary)]">ID</th>
+              <th className="text-left p-3 text-[var(--text-secondary)]">Name</th>
+              <th className="text-left p-3 text-[var(--text-secondary)]">Email</th>
+              <th className="text-left p-3 text-[var(--text-secondary)]">Role</th>
             </tr>
           </thead>
           <tbody>{renderRows(admins)}</tbody>
         </table>
       </div>
-
-      {/* USERS */}
       <div>
-        <h2 className="text-xl font-semibold mb-4">Users</h2>
-        <table className="w-full bg-(--bg-card) rounded-xl shadow-md overflow-hidden">
-          <thead className="bg-(--bg-secondary)">
+        <h2 className="text-xl font-semibold mb-4 text-[var(--text-main)]">
+          Users
+        </h2>
+        <table className="w-full bg-[var(--bg-card)] rounded-xl shadow-md overflow-hidden border border-[var(--soft-border)]">
+          <thead className="bg-[var(--bg-secondary)]">
             <tr>
-              <th className="text-left p-3">ID</th>
-              <th className="text-left p-3">Name</th>
-              <th className="text-left p-3">Email</th>
-              <th className="text-left p-3">Role</th>
-              <th></th>
+              <th className="text-left p-3 text-[var(--text-secondary)]">ID</th>
+              <th className="text-left p-3 text-[var(--text-secondary)]">Name</th>
+              <th className="text-left p-3 text-[var(--text-secondary)]">Email</th>
+              <th className="text-left p-3 text-[var(--text-secondary)]">Role</th>
             </tr>
           </thead>
           <tbody>{renderRows(normalUsers)}</tbody>
@@ -141,13 +153,15 @@ export default function UsersAdmin() {
           <button
             onClick={handleSaveRoles}
             disabled={saving}
-            className="bg-black text-white px-6 py-2 rounded-lg hover:opacity-90 transition"
+            className="bg-[var(--primary-color)] text-white px-6 py-2 rounded-lg hover:opacity-90 transition disabled:opacity-60"
           >
             {saving ? "Saving..." : "Save Changes"}
           </button>
         </div>
       )}
-      <AnimatePresence>{menu.isOpen && <AdminMenuDrawer />}</AnimatePresence>
+      <AnimatePresence>
+        {menu.isOpen && <AdminMenuDrawer />}
+      </AnimatePresence>
     </div>
   );
 }

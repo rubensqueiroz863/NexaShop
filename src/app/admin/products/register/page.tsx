@@ -58,6 +58,8 @@ export default function RegisterProductsAdmin() {
       });
 
       const data = await res.json();
+      
+      console.log(data);
 
       if (!res.ok) {
         setError(data.message || "Error in server.");
@@ -76,33 +78,33 @@ export default function RegisterProductsAdmin() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-dvh bg-neutral-100">
+    <div className="flex items-center justify-center min-h-dvh bg-(--bg-main)">
       <AnimatePresence>
         {successMessage && (
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="fixed top-5 right-5 bg-green-500 text-white px-5 py-3 rounded shadow-lg z-50"
+            className="fixed top-5 right-5 bg-(--success) text-(--text-light) px-5 py-3 rounded shadow-lg z-50"
           >
             {successMessage}
           </motion.div>
         )}
       </AnimatePresence>
-      <div className="bg-white w-full max-w-md rounded-xl shadow-lg p-8">
-        <h1 className="text-2xl font-semibold text-neutral-800 mb-6 text-center">
+      <div className="bg-(--bg-card) w-full max-w-md rounded-xl shadow-lg p-8">
+        <h1 className="text-2xl font-semibold text-(--text-main) mb-6 text-center">
           Register Product
         </h1>
         <form
           onSubmit={handleProduct}
-          className="flex flex-col gap-4 text-neutral-700"
+          className="flex flex-col gap-4 text-(--text-secondary)"
         >
           <div className="flex flex-col gap-1">
             <label className="text-sm">Product Name</label>
             <input
               name="nome"
               type="text"
-              className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-neutral-800"
+              className="bg-(--bg-soft) text-(--text-main) border border-(--soft-border) rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-(--primary-color)"
             />
           </div>
           <div className="flex flex-col gap-1">
@@ -112,8 +114,8 @@ export default function RegisterProductsAdmin() {
               type="text"
               value={price}
               onChange={handleChange}
-              placeholder="R$ 0,00"
-              className="border rounded-md px-3 py-2 w-full"
+              placeholder="$0.00"
+              className="bg-(--bg-soft) text-(--text-main) border border-(--soft-border) rounded-md px-3 py-2"
             />
           </div>
           <div className="flex flex-col gap-1">
@@ -121,48 +123,38 @@ export default function RegisterProductsAdmin() {
             <input
               name="photo"
               type="text"
-              className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-neutral-800"
+              className="bg-(--bg-soft) text-(--text-main) border border-(--soft-border) rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-(--primary-color)"
             />
           </div>
           <div className="flex flex-col gap-1">
             <label className="text-sm">Category</label>
             <select
               name="subcategory"
-              className="border cursor-pointer rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-neutral-800"
+              className="bg-(--bg-soft) text-(--text-main) border border-(--soft-border) cursor-pointer rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-(--primary-color)"
             >
-              <option className="cursor-pointer" value="7ee3e263-9a56-4f99-9145-c274f31ddbc9">
-                Audio & Headphones
-              </option>
-              <option className="cursor-pointer" value="8aa906d4-1a42-4860-8464-85ff9f2317d5">
-                Tablets
-              </option>
-              <option className="cursor-pointer" value="d5c0f357-a781-4481-8628-895778f8682c">
-                Laptops
-              </option>
-              <option className="cursor-pointer" value="f385ddd2-0430-4a89-af5b-737ade53aeed">
-                Smartphones
-              </option>
-              <option className="cursor-pointer" value="f9cee331-e930-43d7-9929-bbe668281776">
-                TV & Video
-              </option>
-              <option className="cursor-pointer" value="fe061032-770c-4180-94bd-4a2b1b1cbb4c">
-                Computer Accessories
-              </option>
+              <option value="7ee3e263-9a56-4f99-9145-c274f31ddbc9">Audio & Headphones</option>
+              <option value="8aa906d4-1a42-4860-8464-85ff9f2317d5">Tablets</option>
+              <option value="d5c0f357-a781-4481-8628-895778f8682c">Laptops</option>
+              <option value="f385ddd2-0430-4a89-af5b-737ade53aeed">Smartphones</option>
+              <option value="f9cee331-e930-43d7-9929-bbe668281776">TV & Video</option>
+              <option value="fe061032-770c-4180-94bd-4a2b1b1cbb4c">Computer Accessories</option>
             </select>
           </div>
           {error && (
-            <p className="text-sm text-red-500 text-center">{error}</p>
+            <p className="text-sm text-(--error) text-center">{error}</p>
           )}
           <button
             type="submit"
             disabled={loading}
-            className="mt-2 cursor-pointer bg-neutral-900 text-white py-2 rounded-md hover:bg-neutral-800 transition disabled:opacity-60"
+            className="mt-2 cursor-pointer bg-(--primary-color) text-(--text-light) py-2 rounded-md hover:opacity-90 transition disabled:opacity-60"
           >
             {loading ? "Registering..." : "Register Product"}
           </button>
         </form>
       </div>
-      <AnimatePresence>{menu.isOpen && <AdminMenuDrawer />}</AnimatePresence>
+      <AnimatePresence>
+        {menu.isOpen && <AdminMenuDrawer />}
+      </AnimatePresence>
     </div>
   );
 }

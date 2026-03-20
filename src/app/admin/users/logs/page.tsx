@@ -15,7 +15,14 @@ export default function UserActivityLogs() {
     async function fetchLogs() {
       try {
         const res = await fetch("https://sticky-charil-react-blog-3b39d9e9.koyeb.app/user/activity");
-        const data = await res.json();
+        
+        let data;
+        try {
+          data = await res.json();
+        } catch {
+          data = [];
+        }
+
         setLogs(data);
       } catch (err) {
         console.error("Erro ao buscar logs:", err);
@@ -29,42 +36,70 @@ export default function UserActivityLogs() {
 
   if (loading) {
     return (
-      <div className="max-w-6xl mx-auto p-8">
-        <h2 className="text-2xl font-semibold mb-6">Logs de Atividades de Usuários</h2>
-        <p className="text-gray-500">Loading logs...</p>
+      <div className="min-h-screen bg-[var(--bg-main)] flex items-center justify-center">
+        <p className="text-[var(--text-muted)]">Loading logs...</p>
       </div>
     );
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-8">
-      <h2 className="text-2xl font-semibold mb-6">Logs of Users Activities</h2>
-
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200 bg-white shadow-md rounded-lg">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Timestamp</th>
-              <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Action</th>
-              <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">User</th>
-              <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">By</th>
-              <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Details</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200">
-            {logs.map(log => (
-              <tr key={log.id} className="hover:bg-gray-50 transition-colors">
-                <td className="px-4 py-2 text-sm text-gray-600">{new Date(log.timestamp).toLocaleString()}</td>
-                <td className="px-4 py-2 text-sm text-gray-600 font-medium">{log.action}</td>
-                <td className="px-4 py-2 text-sm text-gray-600">{log.userId}</td>
-                <td className="px-4 py-2 text-sm text-gray-600">{log.performedBy}</td>
-                <td className="px-4 py-2 text-sm text-gray-600">{log.details}</td>
+    <div className="min-h-screen bg-[var(--bg-main)] px-6 py-10">
+      <div className="max-w-6xl mx-auto">
+        <h2 className="text-2xl font-semibold mb-6 text-[var(--text-dark)]">
+          Logs of Users Activities
+        </h2>
+        <div className="overflow-x-auto border border-[var(--soft-border)] rounded-xl">
+          <table className="min-w-full bg-[var(--bg-card)] rounded-xl overflow-hidden">
+                        <thead className="bg-[var(--bg-soft)]">
+              <tr>
+                <th className="px-4 py-3 text-left text-sm font-medium text-[var(--text-secondary)]">
+                  Timestamp
+                </th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-[var(--text-secondary)]">
+                  Action
+                </th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-[var(--text-secondary)]">
+                  User
+                </th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-[var(--text-secondary)]">
+                  By
+                </th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-[var(--text-secondary)]">
+                  Details
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-[var(--soft-border)]">
+              {logs.map((log) => (
+                <tr
+                  key={log.id}
+                  className="hover:bg-[var(--bg-soft)] transition-colors"
+                >
+                  <td className="px-4 py-3 text-sm text-[var(--text-muted)]">
+                    {new Date(log.timestamp).toLocaleString()}
+                  </td>
+                  <td className="px-4 py-3 text-sm text-[var(--text-main)] font-medium">
+                    {log.action}
+                  </td>
+                  <td className="px-4 py-3 text-sm text-[var(--text-secondary)]">
+                    {log.userId}
+                  </td>
+                  <td className="px-4 py-3 text-sm text-[var(--text-secondary)]">
+                    {log.performedBy}
+                  </td>
+                  <td className="px-4 py-3 text-sm text-[var(--text-muted)]">
+                    {log.details}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
-      <AnimatePresence>{menu.isOpen && <AdminMenuDrawer />}</AnimatePresence>
+
+      <AnimatePresence>
+        {menu.isOpen && <AdminMenuDrawer />}
+      </AnimatePresence>
     </div>
   );
 }

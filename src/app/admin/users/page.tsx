@@ -21,7 +21,7 @@ export default function UsersAdmin() {
         const data = await res.json();
         setUsers(data);
       } catch (err) {
-        console.error("Error in feching users:", err);
+        console.error("Error in fetching users:", err);
       } finally {
         setLoading(false);
       }
@@ -45,40 +45,43 @@ export default function UsersAdmin() {
   };
 
   if (loading) {
-    return <p className="p-4">Loading Users...</p>;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[var(--bg-main)]">
+        <p className="text-[var(--text-muted)]">Loading Users...</p>
+      </div>
+    );
   }
 
   return (
-    <div className="w-full max-w-5xl mx-auto overflow-x-auto p-16">
-      <table className="w-full bg-(--bg-card) rounded-xl shadow-md overflow-hidden">
-        <thead className="bg-(--bg-secondary)">
+    <div className="min-h-screen bg-[var(--bg-main)] w-full max-w-5xl mx-auto overflow-x-auto p-10">
+      <table className="w-full bg-[var(--bg-card)] rounded-xl shadow-md overflow-hidden border border-[var(--soft-border)]">
+        <thead className="bg-[var(--bg-secondary)]">
           <tr>
-            <th className="text-left p-3">ID</th>
-            <th className="text-left p-3">Name</th>
-            <th className="text-left p-3">Email</th>
-            <th className="text-left p-3">Role</th>
+            <th className="text-left p-3 text-[var(--text-secondary)]">ID</th>
+            <th className="text-left p-3 text-[var(--text-secondary)]">Name</th>
+            <th className="text-left p-3 text-[var(--text-secondary)]">Email</th>
+            <th className="text-left p-3 text-[var(--text-secondary)]">Role</th>
             <th className="p-3"></th>
           </tr>
         </thead>
-
         <tbody>
           {users.map(user => (
             <tr
               key={user.id}
-              className="border-t cursor-pointer hover:bg-(--bg-main) transition-all duration-200"
+              className="border-t border-[var(--soft-border)] cursor-pointer transition-all duration-200 hover:bg-[var(--bg-soft)]"
               onClick={() => router.push(`/admin/users/${user.id}`)}
             >
-              <td className="p-3">{user.id}</td>
-              <td className="p-3 font-medium">{user.name}</td>
-              <td className="p-3">{user.email}</td>
-              <td className="p-3">{user.role}</td>
-              <td className="p-3 text-(--error) font-semibold">
+              <td className="p-3 text-[var(--text-muted)]">{user.id}</td>
+              <td className="p-3 font-medium text-[var(--text-main)]">{user.name}</td>
+              <td className="p-3 text-[var(--text-secondary)]">{user.email}</td>
+              <td className="p-3 text-[var(--text-secondary)]">{user.role}</td>
+              <td className="p-3 text-[var(--error)] font-semibold">
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     handleDelete(user.id);
                   }}
-                  className="hover:text-red-600 rounded-full cursor-pointer hover:bg-[--text-muted] p-1 transition"
+                  className="hover:bg-[var(--bg-soft)] p-2 rounded-full transition cursor-pointer"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -102,7 +105,9 @@ export default function UsersAdmin() {
           ))}
         </tbody>
       </table>
-      <AnimatePresence>{menu.isOpen && <AdminMenuDrawer />}</AnimatePresence>
+      <AnimatePresence>
+        {menu.isOpen && <AdminMenuDrawer />}
+      </AnimatePresence>
     </div>
   );
 }
