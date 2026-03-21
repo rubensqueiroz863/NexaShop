@@ -3,68 +3,21 @@
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { ProductProps } from "../types/product";
-import { OpenSans } from "@/lib/fonts";
+import { Inter, OpenSans } from "@/lib/fonts";
 
-type ClickRequest = {
-  productId: string;
-  userEmail: string;
-};
-
-export type Role = "ROLE_USER" | "ROLE_ADMIN";
-
-export interface Category {
-  id: string;
-  name: string;
-  slug: string;
-}
-
-export interface SubCategory {
-  id: string;
-  name: string;
-  slug: string;
-  category: Category;
-}
-
-export interface Product {
-  id: string;
-  name: string;
-  price: number;
-  photo: string;
-  subCategory: SubCategory;
-}
-
-export interface User {
-  id: string;
-  email: string;
-  password: string;
-  name: string;
-  role: Role;
-}
-
-export interface ClickEventDTO {
-  id: string;
-  user: User;
-  product: Product;
-}
-
-async function registerClick(clickEvent: ClickRequest) {
+async function registerClick(clickEvent: { productId: string; userEmail: string }) {
   try {
     const response = await fetch(
       "https://sticky-charil-react-blog-3b39d9e9.koyeb.app/events/click",
       {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(clickEvent),
       }
     );
 
     if (!response.ok) {
-      if (response.status === 401) {
-        return;
-      }
-
+      if (response.status === 401) return;
       throw new Error(`Server error: ${response.status}`);
     }
     return await response.json();
@@ -78,52 +31,49 @@ export default function Product({
   name,
   price,
   photo,
-  width,
+  width = "w-full",
   role
 }: Readonly<ProductProps>) {
   const router = useRouter();
-
-  const userEmail =
-    globalThis.window === undefined
-      ? null
-      : localStorage.getItem("userEmail");
+  const userEmail = typeof window !== "undefined" ? localStorage.getItem("userEmail") : null;
 
   const handleClick = async () => {
-    try {
-      if (userEmail) {
-        await registerClick({
-          productId: id,
-          userEmail,
-        });
-      }
-    } catch (err) {
-      console.log(err);
+    if (userEmail) {
+      await registerClick({ productId: id, userEmail });
     }
-
     router.push(`/product/${id}`);
   };
+
+  // Separar parte inteira e decimal
+  const [integer, decimal] = price.toFixed(2).split(".");
 
   return (
     <button
       onClick={handleClick}
-      className={`cursor-pointer flex flex-col ${width} mb-4 bg-white duration-300 overflow-hidden`}
+      className={`cursor-pointer flex flex-col h-[400px] w-[240px] ${width} mb-4 bg-white rounded-lg shadow-md hover:shadow-lg overflow-hidden transition-shadow duration-100`}
     >
-      <div className="flex items-center justify-center bg-white p-4">
+      {/* Imagem com área fixa */}
+      <div className="bg-white w-full h-full p-0 flex items-center justify-center">
         <Image
-          src="https://i.postimg.cc/pXsJJ92z/526867-200.png"
-          width={800}
-          height={800}
-          alt="Product photo"
-          className="h-36 w-auto object-contain"
+          src={photo || "https://i.postimg.cc/pXsJJ92z/526867-200.png"}
+          width={160}
+          height={160}
+          alt={name}
+          className="min-w-full max-h-auto object-contain"
         />
       </div>
-      <div className="flex flex-col gap-1 p-4">
-        <p className={`text-(--text-dark) font-bold line-clamp-2 ${OpenSans.className}`}>
+
+      <div className="flex flex-col gap-1 p-2 h-[140px]">
+        {/* Nome do produto */}
+        <p className={`text-[var(--text-dark)] font-bold line-clamp-2 ${OpenSans.className}`}>
           {name}
         </p>
-        <p className="text-(--success) font-semibold text-lg">
-          R$ {price}
-        </p>
+
+        {/* Preço estilo Mercado Livre */}
+        <div className={`flex items-start font-inter ${Inter.className} gap-0.5 justify-center text-[var(--text-dark)]`}>
+          <span className="text-[20px]">R$ {integer}</span>
+          <span className="text-xs mt-1 font-light"> {decimal}</span>
+        </div>
       </div>
     </button>
   );

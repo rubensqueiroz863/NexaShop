@@ -111,9 +111,6 @@ export default function SubCategory({ name, slug, role }: Readonly<SubCategoryPr
                 photo={product.photo}
                 role={role}
               />
-              {index !== products.length - 1 && (
-                <span className="absolute bg-(--text-secondary) -right-3 top-1/2 h-full w-px my-2 -translate-y-1/2" />
-              )}
             </div>
           ))}
         </div>

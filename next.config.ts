@@ -8,6 +8,16 @@ const nextConfig: NextConfig = {
         hostname: 'i.postimg.cc',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'm.media-amazon.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'http2.mlstatic.com',
+        pathname: '/**',
+      },
     ],
   },
 };

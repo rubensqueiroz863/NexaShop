@@ -1,28 +1,27 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Logo from "./Logo";
-import Menu from "./Menu";
 import { NavBarProps } from "../types/navbar";
 import Cart from "./Cart";
 import { AnimatePresence, motion } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
 import Link from "next/link";
 import { OpenSans } from "@/lib/fonts";
+import Menu from "./Menu";
+import Logo from "./Logo";
 
 type SearchHistoryDTO = {
   query: string;
 }
 
-function ramdomKey(max: number): number {
-  return Math.floor(Math.random() * max);
-}
+
 
 export default function NavBar({ onSearch }: Readonly<NavBarProps>) {
   const [query, setQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [lastSearchs, setLastSearchs] = useState<SearchHistoryDTO[]>([]);
-  const [selected, setSelected] = useState<"shop" | "home" | "about" | "contact">("shop");
+  const [suggestions, setSuggestions] = useState<SearchHistoryDTO[]>([]);
+  
   const { user } = useAuth();
 
   async function fetchLastSearchs(userId: string) {
@@ -78,6 +77,17 @@ export default function NavBar({ onSearch }: Readonly<NavBarProps>) {
     loadForYou();
   }, [user?.id]);
 
+  useEffect(() => {
+    if (!query) {
+      setSuggestions(lastSearchs); // mostra histórico completo se não digitar nada
+    } else {
+      const filtered = lastSearchs.filter(item =>
+        item.query.toLowerCase().includes(query.toLowerCase())
+      );
+      setSuggestions(filtered);
+    }
+  }, [query, lastSearchs]);
+
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (user) {
@@ -105,10 +115,10 @@ export default function NavBar({ onSearch }: Readonly<NavBarProps>) {
           xl:px-16
           bg-(--bg-card)
         ">
-          <div className="flex gap-8 items-center justify-center">
-            <Menu />
+          <Menu />
+          <div className="hidden md:flex">
+            <Logo />
           </div>
-          <Logo />
           <form
             onSubmit={handleSubmit}
             className="relative mx-auto md:mx-0 flex-1 sm:max-w-sm md:max-w-md xl:max-w-xl"
@@ -119,6 +129,7 @@ export default function NavBar({ onSearch }: Readonly<NavBarProps>) {
               onBlur={() => setIsOpen(false)}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Type here..."
+              required
               className={`
                 w-full
                 md:h-10
@@ -171,44 +182,37 @@ export default function NavBar({ onSearch }: Readonly<NavBarProps>) {
               </svg>
             </button>
             <AnimatePresence>
-              {isOpen && lastSearchs && (
+              {isOpen && suggestions.length > 0 && (
                 <motion.div
-                  onMouseDown={(e) => e.preventDefault()} // evita que input perca foco ao clicar
-                  className="absolute top-full left-0 w-full md:w-auto mt-1 rounded-md bg-(--bg-soft) text-[16px] shadow-lg z-50"
-                  initial={{ opacity: 0, y: -5 }}
+                  onMouseDown={(e) => e.preventDefault()}
+                  className="absolute top-full left-0 w-full md:w-auto mt-2 rounded-md bg-[var(--bg-soft)] shadow-lg z-50 overflow-hidden"
+                  initial={{ opacity: 0, y: -8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -5 }}
-                  transition={{ duration: 0.15 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.2, ease: "easeOut" }}
                 >
-                  {lastSearchs.map(({ query }) => (
-                    <Link
-                      href={`/search/${query}`}
-                      key={ramdomKey(1000000000000)}
-                      className="flex items-center justify-between gap-2 min-h-[40px] rounded-md px-4 hover:bg-(--bg-card) transition-colors text-(--bg-main)"
-                    >
-                      <svg
-                        className="w-5 h-5 scale-x-[-1]"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 28 28"
-                        stroke="currentColor"
+                  <div className="flex flex-col">
+                    {suggestions.map(({ query }) => (
+                      <Link
+                        href={`/search/${query}`}
+                        key={query}
+                        className="flex items-center gap-3 px-4 py-2 min-h-[44px] hover:bg-[var(--bg-card)] text-[var(--bg-main)] transition-colors"
                       >
-                        <circle cx="11" cy="11" r="8" strokeWidth="2" />
-                        <line x1="21" y1="21" x2="16.65" y2="16.65" strokeWidth="2" />
-                      </svg>
-                      <p className="truncate">{query}</p>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        fill="none"
-                        className="w-5 h-5"
-                      >
-                        <path d="M17 17L7 7M7 7h7M7 7v7" />
-                      </svg>
-                    </Link>
-                  ))}
+                        <svg
+                          className="w-5 h-5 text-[var(--bg-main)] scale-x-[-1]"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 28 28"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
+                          <circle cx="11" cy="11" r="8" />
+                          <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                        </svg>
+                        <p className="truncate">{query}</p>
+                      </Link>
+                    ))}
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>
