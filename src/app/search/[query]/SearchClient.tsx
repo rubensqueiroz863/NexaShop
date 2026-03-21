@@ -14,6 +14,38 @@ import CartDrawer from "@/app/components/CartDrawer";
 import { SearchProps } from "@/app/types/search";
 import { useMenu } from "@/lib/menu";
 import { useCart } from "@/lib/cart";
+import { useAuth } from "@/hooks/useAuth";
+
+// Tipagem das recomendações
+export interface UserRecommendation {
+  productId: string;
+  productName: string;
+  productPrice: number;
+  usersInCommon: number;
+}
+
+export interface UserRecommendationGroup {
+  userId: string;
+  userName: string;
+  recommendations: UserRecommendation[];
+}
+
+async function fetchRecommendations(userId: string) {
+  try {
+    const res = await fetch(
+      `https://sticky-charil-react-blog-3b39d9e9.koyeb.app/events/user/recommendations/${userId}`,
+      { headers: { Accept: "application/json" } }
+    );
+
+    if (!res.ok) throw new Error(`Erro ao buscar produtos: ${res.status}`);
+
+    const data: UserRecommendationGroup = await res.json();
+    return data;
+  } catch (err) {
+    console.error(err);
+    return undefined;
+  }
+}
 
 export default function SearchClient({ query }: SearchProps) {
   const [loading, setLoading] = useState(false);
@@ -21,74 +53,73 @@ export default function SearchClient({ query }: SearchProps) {
   const [results, setResults] = useState<ProductProps[]>([]);
   const [hasMore, setHasMore] = useState(false);
   const [page, setPage] = useState(0);
+  const [recommendations, setRecommendations] = useState<UserRecommendation[]>([]);
 
-  const { ref, inView } = useInView({
-    threshold: 0,
-    triggerOnce: false,
-  });
-
+  const { ref, inView } = useInView({ threshold: 0, triggerOnce: false });
   const router = useRouter();
   const menu = useMenu();
   const cart = useCart();
 
-  useEffect(() => {
-    async function findProducts() {
-      if (!query) {
-        router.push("/");
-        return;
-      }
+  const { user } = useAuth();
 
+  // Busca de produtos
+  const fetchProducts = useCallback(
+    async (pageNum: number = 0) => {
+      if (!query) return;
       setLoading(true);
       setSearched(false);
-
       try {
         const res = await fetch(
-          `https://sticky-charil-react-blog-3b39d9e9.koyeb.app/produtos/buscar?name=${query}&page=0&size=4`
+          `https://sticky-charil-react-blog-3b39d9e9.koyeb.app/produtos/buscar?name=${query}&page=${pageNum}&size=4`
         );
-
         const data: PageResponse<ProductProps> = await res.json();
-
-        setResults(data.data);
+        if (pageNum === 0) setResults(data.data);
+        else setResults((prev) => [...prev, ...data.data]);
         setHasMore(data.hasMore);
-        setPage(1);
+        setPage(pageNum + 1);
         setSearched(true);
       } catch (err) {
         console.error(err);
       } finally {
         setLoading(false);
       }
+    },
+    [query]
+  );
+
+  // Carrega mais produtos no scroll
+  const loadMore = useCallback(() => {
+    if (!loading && hasMore) fetchProducts(page);
+  }, [loading, hasMore, fetchProducts, page]);
+
+  useEffect(() => {
+    if (!query) {
+      router.push("/");
+      return;
     }
-
-    findProducts();
-  }, [query, router]);
-
-  const loadMore = useCallback(async () => {
-    if (loading || !hasMore) return;
-
-    setLoading(true);
-    try {
-      const res = await fetch(
-        `https://sticky-charil-react-blog-3b39d9e9.koyeb.app/produtos/buscar?name=${query}&page=${page}&size=4`
-      );
-
-      const data: PageResponse<ProductProps> = await res.json();
-
-      setResults((prev) => [...prev, ...data.data]);
-      setHasMore(data.hasMore);
-      setPage((prev) => prev + 1);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  }, [query, page, hasMore, loading]);
+    fetchProducts(0);
+  }, [query, fetchProducts, router]);
 
   useEffect(() => {
     if (inView) loadMore();
   }, [inView, loadMore]);
 
-  function search(query: string) {
-    router.push(`/search/${query}`);
+  // Busca recomendações (exemplo: usuário logado disponível via menu ou cart)
+  useEffect(() => {
+    if (user?.id != null) {
+      async function loadRecommendations() {
+        const userId = user!.id; // substituir pelo user real
+        const data = await fetchRecommendations(userId);
+        if (data) setRecommendations(data.recommendations);
+      }
+
+      loadRecommendations();
+    }
+    
+  }, [user?.id]);
+
+  function search(q: string) {
+    router.push(`/search/${q}`);
   }
 
   if (!query) return null;
@@ -96,80 +127,81 @@ export default function SearchClient({ query }: SearchProps) {
   return (
     <div className="bg-[var(--bg-main)] min-h-screen">
       <NavBar onSearch={search} />
-      {loading && !searched ? (
-        <p className="px-4 my-4 mb-[400px] text-[var(--text-dark)] font-semibold">
-          Searching...
-        </p>
-      ) : searched ? (
-        <div className="flex my-4 px-4 flex-col">
-          <p className="text-xl text-[var(--text-dark)] font-semibold">
-            {query}
-          </p>
-          <p className="text-sm text-[var(--text-secondary)]">
-            {results.length} results
-          </p>
-        </div>
-      ) : null}
-      <ul
-        className="
-          grid
-          grid-cols-2
-          md:grid-cols-3
-          xl:grid-cols-4
-          gap-6
-          px-4
-        "
-      >
-        {results.map((product, index) => (
-          <div
-            key={product.id}
-            className="relative flex flex-col items-center"
-          >
-            <Product
-              width=""
-              query={query}
-              id={product.id}
-              role="user"
-              name={product.name}
-              price={product.price}
-              photo={product.photo}
-            />
-            {index !== results.length - 1 && (
-              <span
-                className="
-                  absolute
-                  right-[-12px]
-                  top-1/2
-                  h-2/3
-                  w-px
-                  bg-[var(--text-secondary)]
-                  opacity-30
-                  -translate-y-1/2
-                "
-              />
-            )}
-          </div>
-        ))}
-      </ul>
-      {hasMore && (
-        <div
-          ref={ref}
-          className="h-12 flex items-center justify-center my-6"
-        >
-          {loading && (
-            <p className="text-sm text-[var(--text-muted)]">
-              Loading more products...
-            </p>
-          )}
+      {searched && (
+        <div className="flex flex-col px-4 md:px-8 py-4">
+          <p className="text-xl text-[var(--text-dark)] font-semibold">{query}</p>
+          <p className="text-sm text-[var(--text-secondary)]">{results.length} resultados</p>
         </div>
       )}
-      <AnimatePresence>
-        {menu.isOpen && <MenuDrawer />}
-      </AnimatePresence>
-
-      <AnimatePresence>
-        {cart.isOpen && <CartDrawer />}
-      </AnimatePresence>
+      {loading && !searched && (
+        <ul className="grid mt-20 grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6 px-4 md:px-8">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="flex flex-col gap-2 animate-pulse">
+              <div className="bg-[var(--bg-card)] w-full h-40 rounded-md"></div>
+              <div className="h-4 bg-[var(--bg-card)] rounded w-3/4"></div>
+              <div className="h-4 bg-[var(--bg-card)] rounded w-1/2"></div>
+            </div>
+          ))}
+        </ul>
+      )}
+      {!loading && results.length > 0 && (
+        <ul className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6 px-4">
+          {results.map((product, index) => (
+            <div key={product.id} className="relative flex flex-col items-center">
+              <Product
+                width=""
+                query={query}
+                id={product.id}
+                role="user"
+                name={product.name}
+                price={product.price}
+                photo={product.photo}
+              />
+            </div>
+          ))}
+        </ul>
+      )}
+      {!loading && searched && results.length === 0 && (
+        <div className="flex flex-col items-center justify-center py-20">
+          <img src="/empty-box.svg" alt="No results" className="w-32 mb-4" />
+          <p className="text-[var(--text-dark)] font-semibold mb-2">Nenhum produto encontrado</p>
+          <p className="text-[var(--text-secondary)] text-sm mb-4">
+            Tente outra palavra-chave ou explore nossas categorias
+          </p>
+          <button
+            onClick={() => router.push("/categories")}
+            className="px-4 py-2 bg-[var(--primary-color)] rounded-md text-white"
+          >
+            Ver categorias
+          </button>
+        </div>
+      )}
+      {hasMore && (
+        <div ref={ref} className="h-12 flex items-center justify-center my-6">
+          {loading && <p className="text-sm text-[var(--text-muted)]">Carregando mais produtos...</p>}
+        </div>
+      )}
+      {recommendations.length > 0 && (
+        <div className="px-4 my-8">
+          <p className="text-lg font-semibold text-[var(--text-dark)] mb-4">Produtos recomendados para você</p>
+          <ul className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
+            {recommendations.map((rec) => (
+              <Product
+                key={rec.productId}
+                width=""
+                query=""
+                id={rec.productId}
+                role="user"
+                name={rec.productName}
+                price={rec.productPrice}
+                photo=""
+              />
+            ))}
+          </ul>
+        </div>
+      )}
+      <AnimatePresence>{menu.isOpen && <MenuDrawer />}</AnimatePresence>
+      <AnimatePresence>{cart.isOpen && <CartDrawer />}</AnimatePresence>
       <Footer />
     </div>
   );

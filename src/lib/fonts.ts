@@ -19,3 +19,13 @@ export const OpenSans = localFont({
     }, 
   ],
 });
+
+export const Inter = localFont({
+  src: [
+    {
+      path: "../fonts/Inter.ttf",
+      weight: "400",
+      style: "normal",
+    }, 
+  ],
+});

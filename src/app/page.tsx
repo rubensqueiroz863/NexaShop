@@ -55,7 +55,6 @@ export default function HomePage() {
   const cart = useCart();
   const { user } = useAuth();
 
-  // Detecta se está visível na tela (sentinela para infinite scroll)
   const { ref, inView } = useInView({ threshold: 0 });
 
   const fetchSubCategories = useCallback(async () => {
@@ -150,7 +149,7 @@ export default function HomePage() {
         <div className="hidden md:block">
           <CategoriesCard />
         </div>
-        <div className="flex xl:flex-row flex-col gap-2 items-center justify-center xl:px-0 md:px-12">
+        <div className="flex xl:flex-row flex-col gap-2 items-center justify-center">
           <div className="flex flex-row gap-12">
             <CategoryCard name1="Phone" name2="Shop" button="Shop by Category" img="/images/phones.png" show="" grandient="bg-linear-to-r from-[#010101] to-[#35695c]" />
             <CategoryCard name1="Computers" name2="Shop" button="Shop by Category" img="/images/computers.png" show="hidden xl:flex" grandient="bg-linear-to-r from-[#010101] to-[#ff0101]" />
@@ -252,7 +251,6 @@ export default function HomePage() {
           <div className="flex gap-6 overflow-x-auto overflow-y-hidden mt-4">
             {forYou.map(({ product, clicks }, index) => (
               <div key={product.id} className="relative flex items-center">
-                
                 <Product
                   id={product.id}
                   name={product.name}
@@ -262,9 +260,6 @@ export default function HomePage() {
                   photo={product.photo || ""}
                   role="user"
                 />
-                {index !== forYou.length - 1 && (
-                  <span className="absolute bg-(--text-secondary) -right-3 top-1/2 h-full w-px my-2 -translate-y-1/2" />
-                )}
               </div>
             ))}
           </div>
@@ -307,9 +302,6 @@ export default function HomePage() {
                     photo=""
                     role="user"
                   />
-                  {index !== userRecommendations.recommendations.length - 1 && (
-                    <span className="absolute bg-(--text-secondary) -right-3 top-1/2 h-20 w-px opacity-40 -translate-y-1/2" />
-                  )}
                 </div>
               ))}
             </div>

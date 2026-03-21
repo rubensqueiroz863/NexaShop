@@ -5,9 +5,9 @@ export default function Logo() {
   return (
     <Link 
       href="/"
-      className={`${ArchivoBlack.className} hidden md:flex text-(--text-main) text-[12px] md:text-[14px]`}
+      className={`${ArchivoBlack.className} font-bold hidden md:flex text-(--text-light) text-[12px] xl:text-[18px] md:text-[16px]`}
     >
-      ECOMMERCE
+      NexaShop
     </Link>
   );
 }
