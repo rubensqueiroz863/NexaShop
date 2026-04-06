@@ -63,24 +63,60 @@ export default function SearchClient({ query }: SearchProps) {
 
   const { user } = useAuth();
 
-  // Busca de produtos
   const fetchProducts = useCallback(
     async (pageNum: number = 0) => {
       if (!query) return;
+
       setLoading(true);
       setSearched(false);
+
       try {
+        const params = new URLSearchParams({
+          q: query,
+          page: pageNum.toString(),
+          limit: "12",
+          fuzzy: "true",
+          min_score: "50",
+        });
+
+        // EXEMPLOS DE FILTROS (pode vir de state depois)
+        const filters = {
+          price_min: 1000,
+          price_max: 9000,
+          //subcategory: "Smartphones",
+          name_contains: query
+        };
+
+        Object.entries(filters).forEach(([key, value]) => {
+          if (value !== undefined && value !== null) {
+            params.append(key, String(value));
+          }
+        });
+
+        const sort_by = "price_desc";
+        if (sort_by) {
+          params.append("sort_by", sort_by);
+        }
+
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_API_URL}products?name=${query}&page=${pageNum}&size=12`
+          `https://search-api-xamv.onrender.com/search?${params.toString()}`
         );
+
+        if (!res.ok) {
+          throw new Error("Erro ao buscar produtos");
+        }
+
         const data: PageResponse<ProductProps> = await res.json();
+
         if (pageNum === 0) setResults(data.data);
         else setResults((prev) => [...prev, ...data.data]);
+
         setHasMore(data.hasMore);
         setPage(pageNum + 1);
         setSearched(true);
+
       } catch (err) {
-        console.error(err);
+        console.error("Erro na busca:", err);
       } finally {
         setLoading(false);
       }

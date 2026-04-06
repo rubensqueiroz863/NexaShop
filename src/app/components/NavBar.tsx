@@ -46,25 +46,43 @@ export default function NavBar({ onSearch }: Readonly<NavBarProps>) {
   }
 
   async function registerSearch(query: string, userEmail: string) {
+    const searchPayload = {
+      query: query,
+      email: userEmail,
+      performed_by: userEmail,
+
+      fuzzy: true,
+      min_score: "50",
+
+      fields: {
+        name: true
+      },
+
+      filters: {
+        price_min: 1000,
+        price_max: 5000,
+        name_contains: "samsung"
+      }
+    };
+
     try {
-      const response = await fetch(process.env.NEXT_PUBLIC_BACKEND_API_URL + "searches", {
+      const response = await fetch("https://search-api-xamv.onrender.com/search", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          query,
-          userEmail,
-        }),
+        body: JSON.stringify(searchPayload),
       });
 
       if (!response.ok) {
+        const err = await response.text();
+        console.log("Erro backend:", err);
         throw new Error("Erro ao registrar busca");
       }
     } catch (err) {
       console.log(err);
     }
-}
+  }
 
   useEffect(() => {
     if (!user) return;
