@@ -1,3 +1,4 @@
+import { Montserrat } from "next/font/google";
 import localFont from "next/font/local";
 
 export const ArchivoBlack = localFont({
@@ -28,4 +29,9 @@ export const Inter = localFont({
       style: "normal",
     }, 
   ],
+});
+
+export const montserrat = Montserrat({
+  subsets: ["latin"],
+  weight: ["400", "700"],
 });
