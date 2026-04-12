@@ -45,7 +45,7 @@ export default function RegisterClient({ redirectTo }: Readonly<RedirectProps>) 
     e.preventDefault();
 
     setError("");
-    setFieldErrors({}); // 👈 novo
+    setFieldErrors({});
 
     const form = e.currentTarget as HTMLFormElement;
     const nameInput = form.username.value;

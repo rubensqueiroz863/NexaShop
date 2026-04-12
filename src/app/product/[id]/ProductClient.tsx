@@ -49,7 +49,7 @@ export default function ProductClient({ id }: Readonly<ProductClientProps>) {
   };
 
   function search(query: string) {
-    router.push(`/search/${query}`);
+    router.push(`/search/none/${query}`);
   }
 
   if (loading) {

@@ -1,4 +1,8 @@
-export default function CategoriesCard() {
+type CategoriesCardProps = {
+  simple?: boolean;
+};
+
+export default function CategoriesCard({ simple = false }: CategoriesCardProps) {
   const categories = [
     {
       name: "Computers & Accessories",
@@ -76,18 +80,36 @@ export default function CategoriesCard() {
     }
   ];
 
+  // 👉 versão simples
+  if (simple) {
+    return (
+      <ul className="flex flex-col gap-2 text-sm text-(--text-muted)">
+        {categories.map(({ name, icon }) => (
+          <li
+            key={name}
+            className="flex items-center gap-3 mx-2 rounded-md hover:opacity-70 cursor-pointer transition"
+          >
+            <span>{name}</span>
+          </li>
+        ))}
+      </ul>
+    );
+  }
+
+  // 👉 versão completa (original melhorada)
   return (
     <div className="w-fit text-sm flex flex-col text-(--text-dark)">
       {categories.map(({ name, icon }) => (
-        <div
-          key={name}
-          className="group flex flex-col"
-        >
+        <div key={name} className="group flex flex-col">
           <div className="flex items-center gap-3 px-2 py-2 cursor-pointer transition-all">
             <div className="text-(--text-dark) group-hover:text-(--primary-color) transition-colors">
               {icon}
             </div>
-            <p className="flex-1 group-hover:opacity-70">{name}</p>
+
+            <p className="flex-1 group-hover:opacity-70">
+              {name}
+            </p>
+
             <svg
               className="w-4 h-4 text-(--text-dark) group-hover:translate-x-1 group-hover:text-(--primary-color) transition-all"
               viewBox="0 0 24 24"
@@ -98,6 +120,7 @@ export default function CategoriesCard() {
               <path d="M9 6l6 6-6 6"/>
             </svg>
           </div>
+
           <span className="block w-full h-px bg-(--bg-secondary) opacity-50"></span>
         </div>
       ))}

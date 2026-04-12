@@ -145,7 +145,7 @@ export default function HomePage() {
   }, [user?.id]);
 
   function search(query: string) {
-    router.push(`/search/${query}`);
+    router.push(`/search/none/${query}`);
   }
 
   return (

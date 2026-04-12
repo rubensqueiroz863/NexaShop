@@ -212,7 +212,7 @@ export default function NavBar({ onSearch }: Readonly<NavBarProps>) {
                   <div className="flex flex-col">
                     {suggestions.map(({ query }) => (
                       <Link
-                        href={`/search/${query}`}
+                        href={`/search/none/${query}`}
                         key={query}
                         className="flex items-center gap-3 px-4 py-2 min-h-[44px] hover:bg-[var(--bg-card)] text-[var(--bg-main)] transition-colors"
                       >
