@@ -16,6 +16,7 @@ import { useMenu } from "@/lib/menu";
 import { useCart } from "@/lib/cart";
 import { useAuth } from "@/hooks/useAuth";
 import SkeletonSubCategory from "@/app/components/SkeletonSubCategory";
+import FiltersCard from "@/app/components/FiltersCard";
 
 // Tipagem das recomendações
 export interface UserRecommendation {
@@ -48,7 +49,7 @@ async function fetchRecommendations(userId: string) {
   }
 }
 
-export default function SearchClient({ query }: SearchProps) {
+export default function SearchClient({ query, args }: SearchProps) {
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
   const [results, setResults] = useState<ProductProps[]>([]);
@@ -72,6 +73,9 @@ export default function SearchClient({ query }: SearchProps) {
       setSearched(false);
 
       try {
+        let price_min = 0;
+        let price_max = 99999999999;
+
         const params = new URLSearchParams({
           q: decodedQuery,
           page: pageNum.toString(),
@@ -80,10 +84,25 @@ export default function SearchClient({ query }: SearchProps) {
           min_score: "50",
         });
 
-        // EXEMPLOS DE FILTROS (pode vir de state depois)
+        if (args === "upto60") {
+          price_min = 1;
+          price_max = 60;
+        } else if (args === "65to150") {
+          price_min = 65;
+          price_max = 150;
+        } else if (args === "over150") {
+          price_min = 150;
+          price_max = 999999999999999;
+        } else {
+          const [min, max] = args.split("to").map(Number);
+
+          price_min = min;
+          price_max = max;
+        }
+
         const filters = {
-          price_min: 1000,
-          price_max: 9000,
+          price_min: price_min,
+          price_max: price_max,
           //subcategory: "Smartphones",
           name_contains: decodedQuery
         };
@@ -163,73 +182,90 @@ export default function SearchClient({ query }: SearchProps) {
   return (
     <div className="bg-[var(--bg-main)] min-h-screen">
       <NavBar onSearch={search} />
-      {searched && (
-        <div className="flex flex-col px-4 md:px-8 py-4">
-          <p className="text-xl text-[var(--text-dark)] font-semibold">{decodedQuery}</p>
-          <p className="text-sm text-[var(--text-secondary)]">{results.length} resultados</p>
+
+      {/* Container principal: filtros + produtos */}
+      <div className="flex flex-col md:flex-row px-4 md:px-8 py-4 gap-26">
+        {/* Filtros */}
+        <div className="w-full md:w-1/4">
+          <FiltersCard query={query} decodedQuery={decodedQuery} results={results} />
         </div>
-      )}
-      {loading && !searched && (
-        <SkeletonSubCategory count={12}/>
-      )}
-      {!loading && results.length > 0 && (
-        <ul className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 2xl:grid-cols-6 gap-6 px-4">
-          {results.map((product, index) => (
-            <div key={product.id} className="relative flex flex-col items-center">
-              <Product
-                width=""
-                query={query}
-                id={product.id}
-                role="user"
-                name={product.name}
-                price={product.price}
-                photo={product.photo}
-              />
+
+        {/* Produtos */}
+        <div className="w-full md:w-3/4 flex flex-col">
+
+          {loading && !searched && <SkeletonSubCategory count={12} />}
+
+          {!loading && results.length > 0 && (
+            <ul className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
+              {results.map((product) => (
+                <li key={product.id} className="relative flex flex-col items-center">
+                  <Product
+                    width=""
+                    query={query}
+                    id={product.id}
+                    role="user"
+                    name={product.name}
+                    price={product.price}
+                    photo={product.photo}
+                  />
+                </li>
+              ))}
+            </ul>
+          )}
+
+          {!loading && searched && results.length === 0 && (
+            <div className="flex flex-col items-center justify-center py-20">
+              <img src="/empty-box.svg" alt="No results" className="w-32 mb-4" />
+              <p className="text-[var(--text-dark)] font-semibold mb-2">Nenhum produto encontrado</p>
+              <p className="text-[var(--text-secondary)] text-sm mb-4">
+                Tente outra palavra-chave ou explore nossas categorias
+              </p>
+              <button
+                onClick={() => router.push("/categories")}
+                className="px-4 py-2 bg-[var(--primary-color)] rounded-md text-white"
+              >
+                Ver categorias
+              </button>
             </div>
-          ))}
-        </ul>
-      )}
-      {!loading && searched && results.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-20">
-          <img src="/empty-box.svg" alt="No results" className="w-32 mb-4" />
-          <p className="text-[var(--text-dark)] font-semibold mb-2">Nenhum produto encontrado</p>
-          <p className="text-[var(--text-secondary)] text-sm mb-4">
-            Tente outra palavra-chave ou explore nossas categorias
-          </p>
-          <button
-            onClick={() => router.push("/categories")}
-            className="px-4 py-2 bg-[var(--primary-color)] rounded-md text-white"
-          >
-            Ver categorias
-          </button>
+          )}
+
+          {hasMore && (
+            <div ref={ref} className="h-12 flex items-center justify-center my-6">
+              {loading && (
+                <p className="text-sm text-[var(--text-muted)]">Carregando mais produtos...</p>
+              )}
+            </div>
+          )}
         </div>
-      )}
-      {hasMore && (
-        <div ref={ref} className="h-12 flex items-center justify-center my-6">
-          {loading && <p className="text-sm text-[var(--text-muted)]">Carregando mais produtos...</p>}
-        </div>
-      )}
+      </div>
+
+      {/* Recomendações */}
       {recommendations.length > 0 && (
         <div className="px-4 my-8">
-          <p className="text-lg font-semibold text-[var(--text-dark)] mb-4">Produtos recomendados para você</p>
+          <p className="text-lg font-semibold text-[var(--text-dark)] mb-4">
+            Produtos recomendados para você
+          </p>
           <ul className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-6">
             {recommendations.map((rec) => (
-              <Product
-                key={rec.productId}
-                width=""
-                query=""
-                id={rec.productId}
-                role="user"
-                name={rec.productName}
-                price={rec.productPrice}
-                photo=""
-              />
+              <li key={rec.productId}>
+                <Product
+                  width=""
+                  query=""
+                  id={rec.productId}
+                  role="user"
+                  name={rec.productName}
+                  price={rec.productPrice}
+                  photo=""
+                />
+              </li>
             ))}
           </ul>
         </div>
       )}
+
       <AnimatePresence>{menu.isOpen && <MenuDrawer />}</AnimatePresence>
       <AnimatePresence>{cart.isOpen && <CartDrawer />}</AnimatePresence>
+
       <Footer />
     </div>
   );
