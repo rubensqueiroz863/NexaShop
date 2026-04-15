@@ -11,8 +11,8 @@ type FiltersCardProps = {
 }
 
 export default function FiltersCard({ query, decodedQuery, results }: FiltersCardProps ) {
-  const [priceMin, setPriceMin] = useState("0");
-  const [priceMax, setPriceMax] = useState("100");
+  const [priceMin, setPriceMin] = useState("1");
+  const [priceMax, setPriceMax] = useState("10000");
 
   const router = useRouter();
 
@@ -20,16 +20,13 @@ export default function FiltersCard({ query, decodedQuery, results }: FiltersCar
     const min = Number(priceMin);
     const max = Number(priceMax);
 
-    // valida se são números válidos
     if (isNaN(min) || isNaN(max)) return;
 
     // evita valores negativos
     if (min < 0 || max < 0) return;
 
-    // evita min maior que max
     if (min > max) return;
 
-    // evita vazio
     if (!priceMin || !priceMax) return;
 
     router.push(`/search/${min}to${max}/${query}`);

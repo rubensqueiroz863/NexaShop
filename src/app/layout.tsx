@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "NexaShop",
+  title: "NexoraShopX",
   description: "Meu app de e-commerce, utilizando Next.js, e Spring Boot de backend.",
 };
 
