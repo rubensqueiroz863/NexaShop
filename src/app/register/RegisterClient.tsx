@@ -100,10 +100,10 @@ export default function RegisterClient({ redirectTo }: Readonly<RedirectProps>) 
         onSubmit={handleRegister}
         className="w-full max-w-md bg-[var(--bg-card)] p-8 rounded-2xl shadow-lg flex flex-col gap-6 border border-[var(--soft-border)]"
       >
-        <h1 className="text-2xl text-center text-[var(--text-main)]">
+        <h1 className="text-[22px] text-center text-[var(--text-main)]">
           Welcome to{" "}
           <strong className={`${ArchivoBlack.className} text-[var(--primary-color)]`}>
-            NexaShop
+            Nexora<span className="text-white">ShopX</span>
           </strong>
         </h1>
         <div className="flex flex-col gap-1">
